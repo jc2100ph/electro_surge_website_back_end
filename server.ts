@@ -3,8 +3,9 @@ import mongoose from "mongoose"
 import dotenv from "dotenv"
 import cookieParser from "cookie-parser"
 
-
 import userRoutes from "./routes/userRoutes"
+import productRoutes from "./routes/productRoutes"
+import reviewRoutes from "./routes/reviewRoutes"
 
 const app = express()
 dotenv.config()
@@ -27,6 +28,8 @@ const dbConnection = async () => {
 dbConnection()
 
 app.use("/user", userRoutes)
+app.use("/product", productRoutes)
+app.use("/review", reviewRoutes)
 
 
 app.listen(4000, () => {

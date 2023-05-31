@@ -19,7 +19,7 @@ export async function register(req: Request<RequestRegisterBody>, res:Response){
             email: req.body.email,
             password: hashedPassword 
         })
-        await newUser.save()
+        const savedUser: IUser = await newUser.save()
         return res.json(true)
     } catch (error) {
         console.log(error)
