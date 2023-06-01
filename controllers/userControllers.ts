@@ -1,7 +1,9 @@
-import { Request, Response } from "express";
+import { Request, Response } from "express"
 import User, { IUser } from "../models/User"
-import bcrypt from "bcrypt"
+import Cart, { IcartSchema, IorderProductSchema } from "../models/Cart"
+import Order, {IorderSchema} from "../models/Order"
 import { createToken } from "../authentication/auth"
+import bcrypt from "bcrypt"
 
 interface RequestRegisterBody{
     firstName: string
@@ -19,7 +21,11 @@ export async function register(req: Request<RequestRegisterBody>, res:Response){
             email: req.body.email,
             password: hashedPassword 
         })
+        const newCart = new Cart({
+            userId: newUser._id
+        })
         const savedUser: IUser = await newUser.save()
+        const savedCart: IcartSchema = await newCart.save()
         return res.json(true)
     } catch (error) {
         console.log(error)
@@ -63,10 +69,67 @@ export async function logout(req: Request, res:Response) {
 export async function getUserData(req: Request, res:Response) {
     try {
         const userId = req.verifiedUser?.userId
-        const userData = await User.findOne({_id: userId},{ password: 0 })
-        return res.json(userData)
+        const userData: IUser | null = await User.findOne({_id: userId},{ password: 0 })
+        const findCart: IcartSchema | null  = await Cart.findOne({userId: userId})
+        const findOrder: IorderSchema | null = await Order.findOne({userId: userId})
+        
+        let CartTotalPrice = 0
+        findCart?.userCart.forEach((items) =>{
+            const pricePerItem = items.orderQuantity * items.orderPrice
+            CartTotalPrice = CartTotalPrice + pricePerItem
+        })
+
+        return res.json({userData, findCart, CartTotalPrice, findOrder})
     } catch (error) {
         console.log(error)
+        return res.json(false)
+    }
+}
+
+export async function addToCart(req: Request, res:Response) {
+    try {
+        const userId = req.verifiedUser?.userId
+        const findCart: IcartSchema | null  = await Cart.findOne({userId: userId})
+
+        if (!findCart) {
+            return res.json("no cart");
+        }
+        
+        const newOrderProduct: IorderProductSchema = {
+            orderProductId: req.body.orderProductId,
+            orderName: req.body.orderName,
+            orderColor: req.body.orderColor,
+            orderPictureUrl: req.body.orderPictureUrl,
+            orderQuantity: req.body.orderQuantity,
+            orderPrice: req.body.orderPrice,
+        };
+        findCart.userCart.push(newOrderProduct)
+        const savedCart = await findCart.save()
+        return res.json(true)
+    } catch (error) {
+        console.log(error)
+        return res.json(false)
+    }
+}
+
+export async function removeFromCart(req: Request, res: Response) {
+    try {
+        const userId = req.verifiedUser?.userId
+        const cartProductId = req.params.id
+
+        const updatedCart = await Cart.findOneAndUpdate(
+            { userId: userId },
+            { $pull: { userCart: { _id: cartProductId } } },
+            { new: true }
+        ).exec()
+
+        if (!updatedCart) {
+            return res.json(false);
+        }
+
+        return res.json(true)
+    } catch (error) {
+        console.log(error);
         return res.json(false)
     }
 }

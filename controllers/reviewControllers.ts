@@ -35,13 +35,69 @@ export async function getAllReviews(req: Request, res:Response){
         .skip((Number(page) - 1) * Number(limit))
         .exec();
 
-        const count = await Review.countDocuments({ productId });
+        const count = await Review.countDocuments({ productId })
 
         res.json({
             allReviews,
             totalPages: Math.ceil(count / Number(limit)),
             currentPage: page
         });
+    } catch (error) {
+        console.log(error)
+        res.json(false)
+    }
+}
+
+interface getAllReviewRatingBody{
+    id: string
+    totalRating: number
+    totalFiveStarRating: number
+    totalFourStarRating: number
+    totalThreeStarRating: number
+    totalTwoStarRating: number
+    totalOneStarRating: number
+    averageRating: number
+}
+
+export async function getAllReviewRating(req: Request<getAllReviewRatingBody>, res:Response){
+    try {
+        const productId = req.params.id
+        const allReviews: Ireview[] | null = await Review.find({productId: productId})
+
+        let totalRating = 0
+        let totalFiveStarRating = 0 
+        let totalFourStarRating = 0 
+        let totalThreeStarRating = 0 
+        let totalTwoStarRating = 0 
+        let totalOneStarRating = 0 
+        allReviews.forEach((review) => {
+            totalRating = totalRating + review.rating
+
+            if(review.rating === 5 ){
+                totalFiveStarRating = totalFiveStarRating + 1
+            }
+
+            if(review.rating === 4 ){
+                totalFourStarRating = totalFourStarRating + 1
+            }
+
+            if(review.rating === 3 ){
+                totalThreeStarRating = totalThreeStarRating + 1
+            }
+
+            if(review.rating === 2 ){
+                totalTwoStarRating = totalTwoStarRating + 1
+            }
+
+            if(review.rating === 1 ){
+                totalOneStarRating = totalOneStarRating + 1
+            }
+        })
+
+        const averageRating = totalRating/allReviews.length
+
+
+        return res.json({averageRating, totalFiveStarRating, totalFourStarRating, totalThreeStarRating, totalTwoStarRating, totalOneStarRating})
     } catch (error) {
         console.log(error)
         res.json(false)

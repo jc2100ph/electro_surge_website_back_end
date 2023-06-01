@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser"
 import userRoutes from "./routes/userRoutes"
 import productRoutes from "./routes/productRoutes"
 import reviewRoutes from "./routes/reviewRoutes"
+import orderRoutes from "./routes/orderRoutes"
 
 const app = express()
 dotenv.config()
@@ -30,6 +31,7 @@ dbConnection()
 app.use("/user", userRoutes)
 app.use("/product", productRoutes)
 app.use("/review", reviewRoutes)
+app.use("/order", orderRoutes)
 
 
 app.listen(4000, () => {
