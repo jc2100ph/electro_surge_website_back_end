@@ -63,7 +63,7 @@ export async function getAllReviewRating(req: Request<getAllReviewRatingBody>, r
     try {
         const productId = req.params.id
         const allReviews: Ireview[] | null = await Review.find({productId: productId})
-
+        const reviewAmount = allReviews.length
         let totalRating = 0
         let totalFiveStarRating = 0 
         let totalFourStarRating = 0 
@@ -97,7 +97,7 @@ export async function getAllReviewRating(req: Request<getAllReviewRatingBody>, r
         const averageRating = totalRating/allReviews.length
 
 
-        return res.json({averageRating, totalFiveStarRating, totalFourStarRating, totalThreeStarRating, totalTwoStarRating, totalOneStarRating})
+        return res.json({averageRating, reviewAmount, totalFiveStarRating, totalFourStarRating, totalThreeStarRating, totalTwoStarRating, totalOneStarRating})
     } catch (error) {
         console.log(error)
         res.json(false)
