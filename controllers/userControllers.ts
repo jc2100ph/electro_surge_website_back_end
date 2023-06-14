@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
 import User, { IUser } from "../models/User"
 import Cart, { ICartSchema, IOrderProductSchema } from "../models/Cart"
-import Order, { IorderSchema } from "../models/Order"
+import Order, { IOrderSchema } from "../models/Order"
 import { createToken } from "../authentication/auth"
 import bcrypt from "bcrypt"
 
@@ -65,25 +65,18 @@ export async function logout(req: Request, res: Response) {
     }
 }
 
-// export async function getUserData(req: Request, res: Response) {
-//     try {
-//         const userId = req.verifiedUser?.userId
-//         const userData: IUser | null = await User.findOne({ _id: userId }, { password: 0 })
-//         const findCart: IcartSchema | null = await Cart.findOne({ userId: userId })
-//         const findOrder: IorderSchema | null = await Order.findOne({ userId: userId })
-
-//         let CartTotalPrice = 0
-//         findCart?.userCart.forEach((items) => {
-//             const pricePerItem = items.orderQuantity * items.orderPrice
-//             CartTotalPrice = CartTotalPrice + pricePerItem
-//         })
-
-//         return res.json({ userData, findCart, CartTotalPrice, findOrder })
-//     } catch (error) {
-//         console.log(error)
-//         return res.json(false)
-//     }
-// }
+export async function getUserData(req: Request, res: Response) {
+    try {
+        const userId = req.verifiedUser?.userId
+        const userData: IUser | null = await User.findOne({ _id: userId }, { password: 0 })
+        const findCart: ICartSchema | null = await Cart.findOne({ userId: userId })
+        const findOrder: IOrderSchema | null = await Order.findOne({ userId: userId })
+        return res.status(200).json({ userData, findCart, findOrder })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ error })
+    }
+}
 
 // export async function addToCart(req: Request, res: Response) {
 //     try {

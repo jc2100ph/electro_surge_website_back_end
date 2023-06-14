@@ -12,8 +12,8 @@ export interface IOrderProductSchema extends Document {
 export interface ICartSchema extends Document {
     userId: mongoose.Types.ObjectId
     userCart: IOrderProductSchema[]
+    totalCartPrice: number
 }
-
 
 const orderProductSchema = new Schema({
     cartProductId: { type: mongoose.Schema.Types.ObjectId, ref: "Product", required: true },
@@ -26,7 +26,16 @@ const orderProductSchema = new Schema({
 
 const cartSchema = new Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    userCart: [orderProductSchema]
+    userCart: [orderProductSchema],
+    totalCartPrice: { type: Number, default: 0, }
+})
+
+cartSchema.pre<ICartSchema>("save", async function (next) {
+    this.totalCartPrice = 0
+    this.userCart.forEach((userCart) => {
+        this.totalCartPrice += userCart.cartPrice
+    })
+    next()
 })
 
 export default mongoose.model<ICartSchema>("Cart", cartSchema)
