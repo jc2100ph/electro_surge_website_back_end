@@ -3,6 +3,7 @@ import User, { IUser } from "../models/User"
 import Cart, { ICartSchema, IOrderProductSchema } from "../models/Cart"
 import Order, { IorderSchema } from "../models/Order"
 import { createToken } from "../authentication/auth"
+import bcrypt from "bcrypt"
 
 interface ICreateNewUser {
     firstName: IUser["firstName"]
@@ -31,38 +32,38 @@ export async function register(req: Request<ICreateNewUser>, res: Response) {
     }
 }
 
-// export async function login(req: Request, res: Response) {
-//     try {
-//         const findUser: IUser | null = await User.findOne({ email: req.body.email })
+export async function login(req: Request, res: Response) {
+    try {
+        const findUser: IUser | null = await User.findOne({ email: req.body.email })
 
-//         if (!findUser) {
-//             return res.json("no user")
-//         }
+        if (!findUser) {
+            return res.status(404).json({ message: "User not found" })
+        }
 
-//         const comparePassword: boolean = await bcrypt.compare(req.body.password, findUser.password)
+        const comparePassword: boolean = await bcrypt.compare(req.body.password, findUser.password)
 
-//         if (!comparePassword) {
-//             return res.json(false)
-//         }
+        if (!comparePassword) {
+            return res.status(401).json({ message: "Invalid password" })
+        }
 
-//         const generateToken = createToken(findUser)
-//         res.cookie("token", generateToken, { httpOnly: true })
-//         return res.json(true)
-//     } catch (error) {
-//         console.log(error)
-//         return res.json(false)
-//     }
-// }
+        const generateToken = createToken(findUser)
+        res.cookie("token", generateToken, { httpOnly: true })
+        return res.status(200).json({ message: "Login successful" })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ error })
+    }
+}
 
-// export async function logout(req: Request, res: Response) {
-//     try {
-//         res.cookie("token", '', { expires: new Date(0), httpOnly: true })
-//         return res.json(true)
-//     } catch (error) {
-//         console.log(error)
-//         return res.json(false)
-//     }
-// }
+export async function logout(req: Request, res: Response) {
+    try {
+        res.cookie("token", '', { expires: new Date(0), httpOnly: true })
+        return res.status(200).json({ message: "Logout successful" })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ error })
+    }
+}
 
 // export async function getUserData(req: Request, res: Response) {
 //     try {
