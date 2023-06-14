@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.2](///compare/v1.0.0...v1.1.2) (2023-06-14)
+
+
+### Features
+
+* Add Render deployment configuration a57b644
+
 ## [1.0.0](///compare/v0.5.0...v1.0.0) (2023-06-01)
 
 
