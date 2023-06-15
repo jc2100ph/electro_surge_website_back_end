@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
-import Order, {IorderSchema} from "../models/Order"
+import Order, { IOrderSchema } from "../models/Order"
 
-export async function createOrder(req: Request<IorderSchema>, res:Response){
+export async function createOrder(req: Request, res: Response) {
     try {
         const newOrder = new Order({
             userId: req.verifiedUser?.userId,
@@ -9,7 +9,7 @@ export async function createOrder(req: Request<IorderSchema>, res:Response){
             totalPrice: req.body.totalPrice,
             address: req.body.address,
         })
-        const savedOrder:IorderSchema = await newOrder.save()
+        const savedOrder: IOrderSchema = await newOrder.save()
         return res.json(true)
     } catch (error) {
         console.log(error)
