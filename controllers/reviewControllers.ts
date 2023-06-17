@@ -9,7 +9,7 @@ interface createReviewBody {
     reviewText: string
 }
 
-export async function createReview(req: Request<createReviewBody>, res:Response){
+export async function createReview(req: Request<createReviewBody>, res: Response) {
     try {
         const newReview = new Review({
             productId: req.body.productId,
@@ -26,14 +26,14 @@ export async function createReview(req: Request<createReviewBody>, res:Response)
     }
 }
 
-export async function getAllReviews(req: Request, res:Response){
+export async function getAllReviews(req: Request, res: Response) {
     try {
         const { page = 1, limit = 10 } = req.query;
         const productId = req.params.id
-        const allReviews: Ireview[] | null = await Review.find({productId: productId})
-        .limit(Number(limit) * 1)
-        .skip((Number(page) - 1) * Number(limit))
-        .exec();
+        const allReviews: Ireview[] | null = await Review.find({ productId: productId })
+            .limit(Number(limit) * 1)
+            .skip((Number(page) - 1) * Number(limit))
+            .exec();
 
         const count = await Review.countDocuments({ productId })
 
@@ -48,7 +48,7 @@ export async function getAllReviews(req: Request, res:Response){
     }
 }
 
-interface getAllReviewRatingBody{
+interface getAllReviewRatingBody {
     id: string
     totalRating: number
     totalFiveStarRating: number
@@ -59,45 +59,51 @@ interface getAllReviewRatingBody{
     averageRating: number
 }
 
-export async function getAllReviewRating(req: Request<getAllReviewRatingBody>, res:Response){
+export async function getAllReviewRating(req: Request<getAllReviewRatingBody>, res: Response) {
     try {
         const productId = req.params.id
-        const allReviews: Ireview[] | null = await Review.find({productId: productId})
+        const allReviews: Ireview[] | null = await Review.find({ productId: productId })
         const reviewAmount = allReviews.length
+        let averageRating = 0
         let totalRating = 0
-        let totalFiveStarRating = 0 
-        let totalFourStarRating = 0 
-        let totalThreeStarRating = 0 
-        let totalTwoStarRating = 0 
-        let totalOneStarRating = 0 
+        let totalFiveStarRating = 0
+        let totalFourStarRating = 0
+        let totalThreeStarRating = 0
+        let totalTwoStarRating = 0
+        let totalOneStarRating = 0
         allReviews.forEach((review) => {
             totalRating = totalRating + review.rating
 
-            if(review.rating === 5 ){
+            if (review.rating === 5) {
                 totalFiveStarRating = totalFiveStarRating + 1
             }
 
-            if(review.rating === 4 ){
+            if (review.rating === 4) {
                 totalFourStarRating = totalFourStarRating + 1
             }
 
-            if(review.rating === 3 ){
+            if (review.rating === 3) {
                 totalThreeStarRating = totalThreeStarRating + 1
             }
 
-            if(review.rating === 2 ){
+            if (review.rating === 2) {
                 totalTwoStarRating = totalTwoStarRating + 1
             }
 
-            if(review.rating === 1 ){
+            if (review.rating === 1) {
                 totalOneStarRating = totalOneStarRating + 1
             }
         })
 
-        const averageRating = totalRating/allReviews.length
+        if (Number.isNaN((totalRating / allReviews.length))) {
+            averageRating = 0
+        } else {
+            averageRating = totalRating / allReviews.length
+        }
 
 
-        return res.json({averageRating, reviewAmount, totalFiveStarRating, totalFourStarRating, totalThreeStarRating, totalTwoStarRating, totalOneStarRating})
+
+        return res.json({ averageRating, reviewAmount, totalFiveStarRating, totalFourStarRating, totalThreeStarRating, totalTwoStarRating, totalOneStarRating })
     } catch (error) {
         console.log(error)
         res.json(false)
