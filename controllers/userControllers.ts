@@ -63,7 +63,6 @@ export async function login(req: Request, res: Response) {
             httpOnly: true,
             sameSite: "none",
             secure: true,
-            domain: "localhost"
         })
         return res.status(200).json({ success: "Login successful", userId: findUser._id })
     } catch (error) {

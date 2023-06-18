@@ -16,18 +16,26 @@ app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
     origin: ["http://localhost:3000", "https://electro-surge-website-front-end.vercel.app"],
-    credentials: true
-}))
+    credentials: true,
+    optionsSuccessStatus: 200,
+    methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: [
+        'Access-Control-Allow-Origin',
+        'Content-Type',
+        'Authorization'
+    ],
+    exposedHeaders: 'Set-Cookie'
+}));
 
 const dbConnection = async () => {
-    try{
+    try {
         const mongoURI = process.env.MONGO_URI as string
-        await mongoose.connect(mongoURI,{
+        await mongoose.connect(mongoURI, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         } as any)
         console.log("mongoDB is connected")
-    }catch(err){
+    } catch (err) {
         console.log(err)
     }
 }
