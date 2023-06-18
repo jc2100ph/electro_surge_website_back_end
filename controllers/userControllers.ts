@@ -62,7 +62,7 @@ export async function login(req: Request, res: Response) {
         res.cookie("token", generateToken, {
             httpOnly: true,
             sameSite: "none",
-            secure: false
+            secure: true
         })
         return res.status(200).json({ success: "Login successful", userId: findUser._id })
     } catch (error) {
