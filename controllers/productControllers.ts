@@ -1,23 +1,23 @@
 import { Request, Response } from 'express'
-import Product, { IOption, IProduct } from '../models/Product'
+import Product, { IOptionSchema, IProductSchema } from '../models/Product'
 
-interface CreateOptionBody {
-    color: string
-    hex: string
-    pictureUrl: string
-    price: number
+interface ICreateOptionBody {
+    color: IOptionSchema["color"]
+    hex: IOptionSchema["hex"]
+    pictureUrl: IOptionSchema["pictureUrl"]
+    price: IOptionSchema["price"]
 }
 
-interface CreateProductBody{
-    name: string
-    description: string
-    productType: string
-    option: CreateOptionBody[]
+interface ICreateProductBody {
+    name: IProductSchema["name"]
+    description: IProductSchema["description"]
+    productType: IProductSchema["productType"]
+    option: ICreateOptionBody[]
 }
 
-export async function createProduct(req: Request<CreateProductBody>, res:Response){
+export async function createProduct(req: Request, res: Response) {
     try {
-        const options: IOption[] = req.body.options.map((option: CreateOptionBody) => ({
+        const options: ICreateOptionBody = req.body.options.map((option: ICreateOptionBody) => ({
             color: option.color,
             hex: option.hex,
             pictureUrl: option.pictureUrl,
@@ -30,7 +30,7 @@ export async function createProduct(req: Request<CreateProductBody>, res:Respons
             productType: req.body.productType,
             option: options,
         })
-        const savedProduct: IProduct = await newProduct.save();
+        const savedProduct: IProductSchema = await newProduct.save();
         return res.json(true);
     } catch (error) {
         console.error(error);
@@ -38,10 +38,10 @@ export async function createProduct(req: Request<CreateProductBody>, res:Respons
     }
 }
 
-export async function getProductById(req: Request, res:Response){
+export async function getProductById(req: Request, res: Response) {
     try {
         const productId = req.params.id
-        const singleProduct: IProduct | null = await Product.findById(productId);
+        const singleProduct: IProductSchema | null = await Product.findById(productId);
         return res.json(singleProduct);
     } catch (error) {
         console.log(error);

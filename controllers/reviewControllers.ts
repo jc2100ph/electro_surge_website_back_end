@@ -101,8 +101,6 @@ export async function getAllReviewRating(req: Request<getAllReviewRatingBody>, r
             averageRating = totalRating / allReviews.length
         }
 
-
-
         return res.json({ averageRating, reviewAmount, totalFiveStarRating, totalFourStarRating, totalThreeStarRating, totalTwoStarRating, totalOneStarRating })
     } catch (error) {
         console.log(error)

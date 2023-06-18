@@ -1,28 +1,28 @@
-import { Schema, model } from 'mongoose'
+import mongoose, { Schema, Document } from 'mongoose'
 
-interface IOption {
+export interface IOptionSchema extends Document {
     color: string
     hex: string
     pictureUrl: string
     price: number
 }
 
-interface IProduct {
+export interface IProductSchema extends Document {
     name: string
     description: string
     productType: string
-    option: IOption[]
+    option: IOptionSchema[]
     createdOn: Date
 }
 
-const optionSchema = new Schema<IOption>({
+const optionSchema = new Schema({
     color: { type: String, required: true },
     hex: { type: String, required: true },
     pictureUrl: { type: String, required: true },
     price: { type: Number, required: true }
 });
 
-const productSchema = new Schema<IProduct>({
+const productSchema = new Schema({
     name: { type: String, required: true },
     description: { type: String, required: true },
     productType: { type: String, required: true },
@@ -30,5 +30,4 @@ const productSchema = new Schema<IProduct>({
     createdOn: { type: Date, default: Date.now }
 });
 
-export default model<IProduct>("Product", productSchema);
-export { IOption, IProduct };
+export default mongoose.model<IProductSchema>("Product", productSchema)
