@@ -62,9 +62,7 @@ export async function login(req: Request, res: Response) {
         res.cookie("token", generateToken, {
             httpOnly: true,
             sameSite: "none",
-            secure: true,
-            domain: 'localhost',
-            path: '/',
+            secure: true
         })
         return res.status(200).json({ success: "Login successful", userId: findUser._id })
     } catch (error) {
@@ -75,11 +73,11 @@ export async function login(req: Request, res: Response) {
 
 export async function logout(req: Request, res: Response) {
     try {
-        res.cookie("token", '', { expires: new Date(0), httpOnly: true })
-        return res.status(200).json({ success: "Logout successful" })
+        res.clearCookie('token', { domain: 'https://electro-surge-website-back-end.onrender.com', path: '/' });
+        return res.status(200).json({ success: 'Logout successful' });
     } catch (error) {
-        console.log(error)
-        return res.status(500).json({ error: error })
+        console.log(error);
+        return res.status(500).json({ error: error });
     }
 }
 

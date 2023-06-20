@@ -19,13 +19,7 @@ app.use(cors({
     origin: ["http://localhost:3000", "https://electro-surge-website-front-end.vercel.app"],
     credentials: true,
     optionsSuccessStatus: 200,
-    methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
-    allowedHeaders: [
-        'Access-Control-Allow-Origin',
-        'Content-Type',
-        'Authorization'
-    ],
-    exposedHeaders: 'Set-Cookie'
+    exposedHeaders: ['Set-Cookie']
 }));
 
 const dbConnection = async () => {
