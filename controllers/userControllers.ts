@@ -73,13 +73,19 @@ export async function login(req: Request, res: Response) {
 
 export async function logout(req: Request, res: Response) {
     try {
-        res.clearCookie('token', { domain: 'electro-surge-website-back-end.onrender.com', path: '/' });
+        res.clearCookie('token', {
+            domain: 'electro-surge-website-back-end.onrender.com',
+            path: '/',
+            sameSite: 'none',
+            secure: true
+        });
         return res.status(200).json({ success: 'Logout successful' });
     } catch (error) {
         console.log(error);
         return res.status(500).json({ error: error });
     }
 }
+
 
 export async function getUserData(req: Request, res: Response) {
     try {
