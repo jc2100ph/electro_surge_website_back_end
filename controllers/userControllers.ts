@@ -77,8 +77,6 @@ export async function logout(req: Request, res: Response) {
             httpOnly: true,
             sameSite: 'none',
             secure: true,
-            domain: 'electro-surge-website-back-end.onrender.com',
-            path: '/'
         });
         return res.status(200).json({ success: 'Logout successful' });
     } catch (error) {
