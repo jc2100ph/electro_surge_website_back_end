@@ -92,7 +92,7 @@ export async function getUserData(req: Request, res: Response) {
         const userData: IUser | null = await User.findOne({ _id: userId }, { password: 0 })
         const findCart: ICartSchema | null = await Cart.findOne({ userId: userId })
         const findOrder: IOrderSchema | null = await Order.findOne({ userId: userId })
-        return res.status(200).json({ success: userData, findCart, findOrder })
+        return res.status(200).json({ userData, findCart, findOrder })
     } catch (error) {
         console.log(error)
         return res.status(500).json({ error: error })
